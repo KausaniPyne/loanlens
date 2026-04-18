@@ -25,7 +25,8 @@ def main():
     """
     df = pd.read_sql(query, conn)
     df["record_id_str"] = df["record_id"].astype(str)
-    
+    conn.close()
+
     s3 = boto3.client(
         's3', endpoint_url=settings.S3_ENDPOINT,
         aws_access_key_id=settings.S3_ACCESS_KEY,
@@ -99,12 +100,14 @@ def main():
     train_df = df[df["record_id_str"].isin(train_ids)].copy()
     val_df = df[df["record_id_str"].isin(val_ids)].copy()
     
-    X_train = train_df[TABNET_FEATURES].iloc[:10]
-    y_train = train_df[TARGET].astype(float).iloc[:10]
-    X_val = val_df[TABNET_FEATURES].iloc[:10]
-    y_val = val_df[TARGET].astype(float).iloc[:10]
+    # FULL dataset — no subsampling
+    X_train = train_df[TABNET_FEATURES].astype(float)
+    y_train = train_df[TARGET].astype(float)
+    X_val = val_df[TABNET_FEATURES].astype(float)
+    y_val = val_df[TARGET].astype(float)
 
-    print("Training TabNet...")
+    print(f"Training TabNet on {len(X_train):,} records, validating on {len(X_val):,}...")
+    
     tabnet = TabNetRegressor(
         n_d=32,
         n_a=32,
@@ -116,7 +119,7 @@ def main():
         optimizer_fn=torch.optim.Adam,
         optimizer_params={"lr": 2e-3},
         scheduler_fn=torch.optim.lr_scheduler.StepLR,
-        scheduler_params={"step_size": 10, "gamma": 0.9},
+        scheduler_params={"step_size": 15, "gamma": 0.9},
         mask_type="entmax",
         verbose=10,
         seed=42
@@ -128,10 +131,10 @@ def main():
         eval_set=[(X_val.values, y_val.values.reshape(-1, 1))],
         eval_name=["val"],
         eval_metric=["rmse"],
-        max_epochs=1,
-        patience=20,
-        batch_size=1024,
-        virtual_batch_size=128,
+        max_epochs=100,
+        patience=15,
+        batch_size=2048,
+        virtual_batch_size=256,
         num_workers=0,
         drop_last=False
     )
@@ -145,9 +148,18 @@ def main():
     importance_dict = dict(zip(TABNET_FEATURES, importances.tolist()))
     s3.put_object(Bucket=settings.S3_BUCKET, Key="models/feature_importances.json", Body=json.dumps(importance_dict))
 
+    # Evaluate on validation set
     val_preds = tabnet.predict(X_val.values).flatten()
     val_rmse = mean_squared_error(y_val.values, val_preds, squared=False)
-    print(f"TabNet (Stacked) Val RMSE: {val_rmse:.4f}%")
+    
+    # Quick sanity check on prediction range
+    print(f"\n{'='*50}")
+    print(f"TabNet Stacked Val RMSE:  {val_rmse:.4f}%")
+    print(f"Prediction range:        {val_preds.min():.2f}% – {val_preds.max():.2f}%")
+    print(f"Actual range:            {y_val.min():.2f}% – {y_val.max():.2f}%")
+    print(f"Mean prediction:         {val_preds.mean():.3f}%")
+    print(f"Mean actual:             {y_val.mean():.3f}%")
+    print(f"{'='*50}")
 
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ export const DEMO_PROFILES = {
   YELLOW: {
     annual_income: 1500000, cibil_score: 735, loan_amount: 5500000,
     property_value: 8000000, loan_tenure_months: 240, employment_type: "SALARIED_PRIVATE" as any,
-    city_tier: "TIER_2" as any, current_interest_rate: 8.55,
+    city_tier: "TIER_2" as any, current_interest_rate: 9.55,
     loan_disbursement_date: "2022-03-20", existing_obligations_monthly: 12000,
     lender_name: "ICICI Bank"
   },

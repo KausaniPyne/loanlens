@@ -24,12 +24,16 @@ def main():
     conn = psycopg2.connect(settings.DATABASE_URL.replace('+asyncpg', ''))
     cur = conn.cursor()
 
+    # Get actual record count
+    cur.execute("SELECT COUNT(*) FROM loan_portfolio")
+    training_records = cur.fetchone()[0]
+
     version_id = f"v{datetime.utcnow().strftime('%Y%m%d%H%M')}"
 
     print("Deactivating old versions...")
     cur.execute("UPDATE model_versions SET is_active = FALSE WHERE is_active = TRUE")
 
-    print(f"Registering version {version_id}...")
+    print(f"Registering version {version_id} (trained on {training_records:,} records)...")
     cur.execute("""
         INSERT INTO model_versions
             (version_id, catboost_s3_path, tabnet_s3_path, kmeans_s3_path,
@@ -43,7 +47,7 @@ def main():
         "models/kmeans.pkl",
         "scalers/scaler_bundle.pkl",
         datetime.utcnow(),
-        50000,
+        training_records,
         float(catboost_test_rmse),
         float(tabnet_test_rmse)
     ))
@@ -53,6 +57,9 @@ def main():
     conn.close()
     
     print(f"Model version {version_id} registered and marked active.")
+    print(f"  CatBoost RMSE: {catboost_test_rmse:.4f}%")
+    print(f"  TabNet RMSE:   {tabnet_test_rmse:.4f}%")
+    print(f"  Records:       {training_records:,}")
 
 if __name__ == "__main__":
     main()
