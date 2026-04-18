@@ -1,9 +1,11 @@
-import pickle, boto3, io, os, zipfile, tempfile
+import pickle, boto3, io, os, zipfile, tempfile, logging
 import psycopg2
 from catboost import CatBoostRegressor
 from pytorch_tabnet.tab_model import TabNetRegressor
 from sklearn.cluster import KMeans
 from app.core.config import settings
+
+logger = logging.getLogger("loadlens.artifacts")
 
 class ModelArtifacts:
     catboost: CatBoostRegressor
@@ -21,7 +23,7 @@ class ModelArtifacts:
 
     @classmethod
     def _load(cls) -> "ModelArtifacts":
-        print("Loading Model Artifacts...")
+        logger.info("Loading Model Artifacts...")
         instance = cls()
         
         # Connect to DB to get active paths
@@ -36,7 +38,10 @@ class ModelArtifacts:
         conn.close()
         
         if not row:
-            raise Exception("No active model version found in database.")
+            raise RuntimeError(
+                "No active model version found in model_versions table. "
+                "Run the training pipeline (Phase 03 scripts) before starting the API."
+            )
             
         catboost_path, tabnet_path, kmeans_path, scaler_path = row
         
@@ -49,29 +54,29 @@ class ModelArtifacts:
         tmp_dir = tempfile.gettempdir()
         
         # Load Scalers
-        print("Loading Scalers...")
+        logger.info("Loading Scalers...")
         scaler_resp = s3.get_object(Bucket=settings.S3_BUCKET, Key=scaler_path)
         instance.scaler_bundle = pickle.loads(scaler_resp['Body'].read())
         
         # Load KMeans
-        print("Loading KMeans...")
+        logger.info("Loading KMeans...")
         kmeans_resp = s3.get_object(Bucket=settings.S3_BUCKET, Key=kmeans_path)
         instance.kmeans = pickle.loads(kmeans_resp['Body'].read())
         
         # Load Catboost
-        print("Loading CatBoost...")
+        logger.info("Loading CatBoost...")
         cb_tmp = os.path.join(tmp_dir, "catboost_model.cbm")
         s3.download_file(settings.S3_BUCKET, catboost_path, cb_tmp)
         instance.catboost = CatBoostRegressor()
         instance.catboost.load_model(cb_tmp)
         
         # Load TabNet
-        print("Loading TabNet...")
+        logger.info("Loading TabNet...")
         tn_zip = os.path.join(tmp_dir, "tabnet_model.zip")
         s3.download_file(settings.S3_BUCKET, tabnet_path, tn_zip)
         
         instance.tabnet = TabNetRegressor()
         instance.tabnet.load_model(tn_zip)
 
-        print("Models successfully loaded into memory.")
+        logger.info("All models successfully loaded into memory.")
         return instance

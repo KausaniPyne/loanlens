@@ -1,12 +1,15 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
-import time
+import time, logging, traceback
 from app.core.config import settings
 from app.core.redis import init_redis, close_redis, redis_client
 from app.ml.artifacts import ModelArtifacts
 from app.api.v1 import audit, simulate, negotiation, balance_transfer, lenders
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("loadlens")
 
 app = FastAPI(
     title="LoadLens API",
@@ -53,12 +56,31 @@ app.include_router(balance_transfer.router, prefix="/api/v1/balance-transfer", t
 app.include_router(lenders.router, prefix="/api/v1/lenders", tags=["lenders"])
 
 
+# --- Global Exception Handlers (Step 4) ---
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error: {traceback.format_exc()}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error. Request has been logged."}
+    )
+
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    return JSONResponse(status_code=422, content={"detail": str(exc)})
+
+
+# --- Lifecycle Events ---
+
 @app.on_event("startup")
 async def startup():
     await init_redis()
     from app.core.redis import redis_client
     app.state.redis = redis_client
+    logger.info("Redis initialized.")
     ModelArtifacts.get()
+    logger.info("Models loaded - application ready.")
 
 
 @app.on_event("shutdown")

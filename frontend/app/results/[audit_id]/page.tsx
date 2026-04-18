@@ -1,15 +1,28 @@
-import { getAudit } from "@/lib/api";
 import VerdictDashboard from "@/components/verdict/VerdictDashboard";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
+import { AuditResult } from "@/lib/types";
+
+async function fetchAudit(auditId: string): Promise<AuditResult | null> {
+  const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+  try {
+    const res = await fetch(`${BASE}/api/v1/audit/${auditId}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.error) return null;
+    return data as AuditResult;
+  } catch {
+    return null;
+  }
+}
 
 export default async function ResultsPage({ params }: { params: { audit_id: string } }) {
-  try {
-    const audit = await getAudit(params.audit_id);
-    if (!audit || audit.error as any) {
-        return redirect("/audit");
-    }
-    return <VerdictDashboard audit={audit} />;
-  } catch (err) {
-    return redirect("/audit");
+  const audit = await fetchAudit(params.audit_id);
+  
+  if (!audit) {
+    notFound();
   }
+
+  return <VerdictDashboard audit={audit} />;
 }

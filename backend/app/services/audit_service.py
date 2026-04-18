@@ -1,4 +1,5 @@
 from sqlalchemy import text
+from fastapi import HTTPException
 from app.ml.pipeline import run_inference
 from app.services.negotiation_service import build_playbook
 from app.schemas.borrower import BorrowerProfile
@@ -61,9 +62,15 @@ async def create_audit(profile: BorrowerProfile, db, redis) -> dict:
 
 
 async def fetch_audit(audit_id: str, db):
+    try:
+        import uuid as _uuid
+        _uuid.UUID(audit_id)  # validate format
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Invalid audit ID format")
+
     result = await db.execute(text("SELECT * FROM audits WHERE audit_id = :aid"), {"aid": audit_id})
     row = result.fetchone()
     if not row:
-        return {"error": "Audit not found"}
+        raise HTTPException(status_code=404, detail="Audit not found")
         
     return dict(row._mapping)
