@@ -42,6 +42,7 @@ async def run_inference(profile: BorrowerProfile, db, redis) -> dict:
     # TabNet meta prediction
     tabnet_vec = build_tabnet_vector(profile, derived, catboost_pred, artifacts)
     tabnet_pred = float(artifacts.tabnet.predict(tabnet_vec)[0])
+    tabnet_pred = float(np.clip(tabnet_pred, -99.99, 99.99))
 
     # TabNet feature importance for this prediction (global importances as proxy)
     # pytorch_tabnet's feature importances is populated after .fit(). 
