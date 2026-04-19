@@ -70,7 +70,7 @@ Click **"Load Green Demo"**, **"Load Yellow Demo"**, or **"Load Red Demo"** on t
 ```
 
 - **Backend**: FastAPI + Python 3.11
-- **ML Engine**: CatBoost + TabNet stacked ensemble, K-Means clustering (8 clusters, 50K synthetic records)
+- **ML Engine**: CatBoost + TabNet stacked ensemble, K-Means clustering (8 clusters, 100K synthetic records)
 - **Database**: PostgreSQL 15 (loan portfolio + audit logs + model registry)
 - **Cache**: Redis 7 (corridor caching + rate limiting)
 - **Model Storage**: MinIO (S3-compatible object store)
@@ -79,7 +79,7 @@ Click **"Load Green Demo"**, **"Load Yellow Demo"**, or **"Load Red Demo"** on t
 ## How It Works
 
 1. **Data Ingestion** — Parse the borrower's loan configuration and financial profile
-2. **Peer Grouping** — K-Means isolates the borrower's exact financial cohort from 50,000 records
+2. **Peer Grouping** — K-Means isolates the borrower's exact financial cohort from 100,000 records
 3. **AI Benchmarking** — CatBoost predicts base rate; TabNet meta-model refines with sequential attention
 4. **The Verdict** — GREEN (elite deal), YELLOW (fair market), or RED (action required) with a full negotiation playbook
 
