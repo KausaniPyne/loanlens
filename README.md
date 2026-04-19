@@ -1,16 +1,34 @@
-# LoadLens
+# 🚀 LoadLens: Enterprise Loan Intelligence Engine
 
-AI-powered home loan benchmarking engine. Reveals whether your interest rate is fair by comparing you against thousands of statistically similar borrowers using a CatBoost + TabNet stacked ensemble.
+**LoadLens** is a high-performance benchmarking platform that brings radical transparency to the home loan market. By leveraging a **Stacked Ensemble (CatBoost + TabNet)** and **K-Means Clustering**, it analyzes 100,000+ peer profiles to determine if a borrower's interest rate is market-fair or an overpayment.
 
-![Next.js](https://img.shields.io/badge/Next.js-14-black) ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688) ![Python](https://img.shields.io/badge/Python-3.11-blue) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791) ![Redis](https://img.shields.io/badge/Redis-7-DC382D)
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js) ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi) ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=for-the-badge&logo=postgresql) ![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=for-the-badge&logo=redis)
 
 ---
 
-## Prerequisites
+## 💎 Core Value Proposition
 
-- **Docker Desktop** (latest)
-- **8 GB RAM** minimum
-- Ports `3000`, `8000`, `5432`, `6379`, `9000`, `9001` must be free
+* **Objective Benchmarking**: Moves beyond "teaser rates" to show what borrowers with your *exact* financial DNA are actually paying.
+* **Predictive Intelligence**: Dual-layer ML stack forecasts "Fair Market Rates" with high precision by modeling non-linear interactions.
+* **Actionable Recalibration**: Generates custom negotiation scripts and refinancing ROI calculations for users in the "RED" zone.
+
+## 🏗️ System Architecture
+
+LoadLens utilizes a distributed microservices architecture designed for low-latency inference and scalable data processing.
+
+```mermaid
+graph TD
+    A[Next.js 14 Frontend] -->|REST API| B(FastAPI Backend)
+    B --> C{Orchestrator}
+    C --> D[PostgreSQL 15: Persistence]
+    C --> E[Redis 7: Distributed Cache]
+    C --> F[ML Inference Engine]
+    F --> G[MinIO: S3 Model Store]
+    
+    subgraph "ML Stack"
+    H[K-Means Clustering] --> I[CatBoost Regressor]
+    I --> J[TabNet Meta-Learner]
+    end
 
 ## One-Command Setup
 
@@ -41,8 +59,22 @@ After training completes, **restart the backend** to load models into memory:
 
 ```bash
 docker compose restart backend
-```
 
+```
+## ⚡ Quick Start
+
+### Prerequisites
+* **Engine**: Docker Desktop (latest)
+* **Hardware**: 8 GB RAM minimum
+* **Ports**: `3000`, `8000`, `5432`, `6379`, `9000-9001` must be free
+
+### One-Command Setup
+```bash
+git clone [https://github.com/KausaniPyne/loanlens.git](https://github.com/KausaniPyne/loanlens.git)
+cd loanlens
+docker compose up --build -d
+
+```
 ## Access the Application
 
 | Service | URL |
