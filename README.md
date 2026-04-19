@@ -1,4 +1,4 @@
-# 🚀 LoadLens: Enterprise Loan Intelligence Engine
+# 🚀 LoanLens: Enterprise Loan Intelligence Engine
 
 **LoadLens** is a high-performance benchmarking platform that brings radical transparency to the home loan market. By leveraging a **Stacked Ensemble (CatBoost + TabNet)** and **K-Means Clustering**, it analyzes 100,000+ peer profiles to determine if a borrower's interest rate is market-fair or an overpayment.
 
