@@ -17,45 +17,73 @@ const getExplanation = (featureKey: string) => {
 };
 
 const getIcon = (featureKey: string) => {
-    switch(featureKey) {
-        case "cibil_score_scaled": return <ShieldCheck size={20} className="text-[var(--accent)]" />;
-        case "dti_ratio_scaled": return <Scale size={20} className="text-[var(--yellow)]" />;
-        case "ltv_ratio_scaled": return <Building size={20} className="text-[var(--green)]" />;
-        case "employment_encoded": return <Briefcase size={20} className="text-[var(--text-secondary)]" />;
-        case "city_encoded": return <MapPin size={20} className="text-[var(--text-secondary)]" />;
-        case "log_loan_amount_scaled": return <DollarSign size={20} className="text-[var(--text-secondary)]" />;
-        case "log_annual_income_scaled": return <Activity size={20} className="text-[var(--text-secondary)]" />;
-        case "catboost_pred": return <BrainCircuit size={20} className="text-[var(--text-secondary)]" />;
-        default: return <LineChart size={20} className="text-[var(--text-secondary)]" />;
-    }
-}
+  const iconProps = { size: 18 };
+  switch (featureKey) {
+    case "cibil_score_scaled": return <ShieldCheck {...iconProps} color="var(--accent)" />;
+    case "dti_ratio_scaled": return <Scale {...iconProps} color="var(--yellow)" />;
+    case "ltv_ratio_scaled": return <Building {...iconProps} color="var(--green)" />;
+    case "employment_encoded": return <Briefcase {...iconProps} color="var(--text-secondary)" />;
+    case "city_encoded": return <MapPin {...iconProps} color="var(--text-secondary)" />;
+    case "log_loan_amount_scaled": return <DollarSign {...iconProps} color="var(--text-secondary)" />;
+    case "log_annual_income_scaled": return <Activity {...iconProps} color="var(--text-secondary)" />;
+    case "catboost_pred": return <BrainCircuit {...iconProps} color="var(--text-secondary)" />;
+    default: return <LineChart {...iconProps} color="var(--text-secondary)" />;
+  }
+};
 
 export default function KeyDrivers({ key_drivers }: { key_drivers: string[] }) {
   if (!key_drivers || key_drivers.length === 0) return null;
   const topDrivers = key_drivers.slice(0, 3);
 
   return (
-    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6">
-      <div className="flex items-center gap-2 mb-6">
-         <Star size={20} className="text-[var(--yellow)] fill-[var(--yellow)]" />
-         <h3 className="text-xl font-bold text-white">AI Grading Drivers</h3>
+    <div className="card" style={{ padding: "2rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+        <Star size={18} color="var(--yellow)" fill="var(--yellow)" />
+        <h3 style={{ fontSize: "1.3rem" }}>AI Grading Drivers</h3>
       </div>
-      <p className="text-sm text-[var(--text-secondary)] mb-6">TabNet neural attention weighted these factors highest for your specific rate prediction.</p>
+      <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
+        TabNet neural attention weighted these factors highest for your specific rate prediction.
+      </p>
       
-      <div className="space-y-4">
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
         {topDrivers.map((driver, idx) => (
-          <div key={driver} className="flex gap-4 p-4 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] items-start">
-            <div className="mt-1 bg-[var(--surface)] p-2 rounded-full border border-[var(--border)]">
-                {getIcon(driver)}
+          <div key={driver} style={{
+            display: "flex",
+            gap: "1rem",
+            padding: "1rem",
+            borderRadius: "var(--radius-sm)",
+            background: "var(--surface-2)",
+            border: "1px solid var(--border)",
+            alignItems: "flex-start",
+          }}>
+            <div style={{
+              marginTop: "2px",
+              background: "var(--surface)",
+              padding: "0.5rem",
+              borderRadius: "50%",
+              border: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+              {getIcon(driver)}
             </div>
             <div>
-               <div className="font-semibold text-white mb-1 flex items-center gap-2">
-                 {FEATURE_LABELS[driver] || driver}
-                 <span className="text-[10px] bg-[var(--surface)] border border-[var(--border)] px-2 py-0.5 rounded-full text-[var(--text-secondary)] font-mono">#{idx+1}</span>
-               </div>
-               <div className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                 {getExplanation(driver)}
-               </div>
+              <div style={{ fontWeight: 600, marginBottom: "0.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                {FEATURE_LABELS[driver] || driver}
+                <span style={{
+                  fontSize: "0.6rem",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  padding: "0.15rem 0.5rem",
+                  borderRadius: "100px",
+                  color: "var(--text-muted)",
+                  fontFamily: "monospace",
+                }}>#{idx + 1}</span>
+              </div>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                {getExplanation(driver)}
+              </div>
             </div>
           </div>
         ))}
