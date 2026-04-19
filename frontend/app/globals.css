@@ -1,28 +1,275 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg: #0a0a0a;
-  --surface: #111111;
-  --surface-2: #1a1a1a;
-  --border: #2a2a2a;
-  --text-primary: #f5f5f5;
-  --text-secondary: #888888;
-  --accent: #dc2626;
-  --accent-hover: #b91c1c;
-  --green: #16a34a;
-  --green-bg: #052e16;
-  --yellow: #ca8a04;
-  --yellow-bg: #1c1400;
-  --red: #dc2626;
-  --red-bg: #1c0000;
-  --radius: 8px;
-  --font: 'Inter', system-ui, sans-serif;
+  /* PPT Palette — Warm dark with red accents */
+  --bg: #0f0b0b;
+  --surface: #1a1210;
+  --surface-2: #231a16;
+  --surface-red: #2d1515;
+  --surface-blue: #0f1a2d;
+  --border: #3d2828;
+  --border-hover: #5a3535;
+  --text-primary: #f0e8e0;
+  --text-secondary: #8a7a6a;
+  --text-muted: #5a4e44;
+  --accent: #c0392b;
+  --accent-hover: #a93226;
+  --accent-glow: rgba(192, 57, 43, 0.25);
+  --accent-soft: rgba(192, 57, 43, 0.08);
+  --green: #27ae60;
+  --green-bg: #0a2618;
+  --green-border: #1a4a30;
+  --yellow: #f39c12;
+  --yellow-bg: #2a1e05;
+  --yellow-border: #4a3510;
+  --red: #e74c3c;
+  --red-bg: #2d1515;
+  --red-border: #5a2a2a;
+  --blue-accent: #2980b9;
+  --blue-bg: #0f1a2d;
+  --blue-border: #1a3050;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'DM Serif Display', 'Georgia', serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--bg);
   color: var(--text-primary);
-  font-family: var(--font);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings — DM Serif Display Italic (PPT Signature) */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h1 { font-size: 3.2rem; }
+h2 { font-size: 2.4rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.15rem; }
+
+/* ── Card Variants ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+}
+
+.card-red {
+  background: var(--surface-red);
+  border: 1px solid var(--red-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.card-blue {
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+/* ── Pill Badge Tags (PPT style) ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-family: var(--font-body);
+  font-style: normal;
+}
+
+.pill-green {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(39, 174, 96, 0.08);
+}
+
+.pill-yellow {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  background: rgba(243, 156, 18, 0.08);
+}
+
+.pill-blue {
+  border-color: var(--blue-accent);
+  color: var(--blue-accent);
+  background: rgba(41, 128, 185, 0.08);
+}
+
+/* ── Quote Block (PPT left-bar style) ── */
+.quote-block {
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* ── Glowing Accent Button ── */
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-body);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 30px rgba(192, 57, 43, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-body);
+}
+
+.btn-outline:hover {
+  border-color: var(--border-hover);
+  background: var(--surface);
+}
+
+/* ── Form Inputs ── */
+.input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+select.input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a7a6a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+/* ── Verdict Color Bars (left-border) ── */
+.verdict-green { border-left: 4px solid var(--green); }
+.verdict-yellow { border-left: 4px solid var(--yellow); }
+.verdict-red { border-left: 4px solid var(--red); }
+
+/* ── Red Ambient Glow Background ── */
+.glow-bg {
+  position: relative;
+}
+
+.glow-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Spinner ── */
+.spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Fade-in animation ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.2rem; }
+  .card, .card-red, .card-blue { padding: 1.25rem; }
 }

@@ -1,23 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: "LoanLens — AI Home Loan Benchmarking",
-  description:
-    "Audit your home loan interest rate against similar borrowers. Discover if you're overpaying and get a personalised negotiation playbook.",
+  title: "LoanLens — Stop Guessing, Start Auditing",
+  description: "AI-powered home loan benchmarking engine. The Financial Mirror that reveals your true market standing with surgical precision.",
+  keywords: ["home loan", "interest rate", "benchmarking", "AI", "CIBIL", "fair rate"],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

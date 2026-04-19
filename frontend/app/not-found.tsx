@@ -2,18 +2,24 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-[var(--bg)] flex items-center justify-center text-[var(--text-primary)]">
-      <div className="max-w-md w-full mx-auto p-8 bg-[var(--surface)] border border-[var(--border)] rounded-xl text-center space-y-6">
-        <div className="text-6xl font-bold text-[var(--text-secondary)]">404</div>
-        <h2 className="text-2xl font-bold">Audit Not Found</h2>
-        <p className="text-[var(--text-secondary)] text-sm">
-          This audit ID does not exist or has expired.
+    <main style={{
+      background: "var(--bg)",
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "2rem",
+    }}>
+      <div style={{ textAlign: "center", maxWidth: "500px" }}>
+        <h1 style={{ fontSize: "5rem", marginBottom: "0.5rem", color: "var(--accent)" }}>404</h1>
+        <h2 style={{ marginBottom: "1rem" }}>Audit Not Found</h2>
+        <p style={{ color: "var(--text-secondary)", marginBottom: "2rem", lineHeight: 1.7 }}>
+          This audit ID doesn&apos;t exist or has expired. Run a new audit to benchmark your loan.
         </p>
-        <Link
-          href="/audit"
-          className="inline-block bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-        >
-          Run New Audit
+        <Link href="/audit">
+          <button className="btn-primary">
+            Start a New Audit →
+          </button>
         </Link>
       </div>
     </main>
