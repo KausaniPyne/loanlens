@@ -46,3 +46,4 @@ venv/
 # Docker volumes mapped locally (if any)
 postgres_data/
 minio_data/
+pitch.md
