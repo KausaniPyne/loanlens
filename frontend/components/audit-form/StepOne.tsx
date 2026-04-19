@@ -45,79 +45,81 @@ export default function StepOne() {
   const maxDateStr = maxDate.toISOString().split("T")[0];
 
   return (
-    <form onSubmit={handleNext} className="space-y-6">
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-        <button type="button" onClick={() => loadDemo("GREEN")} className="text-xs bg-[var(--green-bg)] text-[var(--green)] px-3 py-1 rounded border border-[var(--green)] whitespace-nowrap">Load Green Demo</button>
-        <button type="button" onClick={() => loadDemo("YELLOW")} className="text-xs bg-[var(--yellow-bg)] text-[var(--yellow)] px-3 py-1 rounded border border-[var(--yellow)] whitespace-nowrap">Load Yellow Demo</button>
-        <button type="button" onClick={() => loadDemo("RED")} className="text-xs bg-[var(--red-bg)] text-[var(--red)] px-3 py-1 rounded border border-[var(--red)] whitespace-nowrap">Load Red Demo</button>
+    <form onSubmit={handleNext}>
+      {/* Demo Buttons */}
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem", flexWrap: "wrap" }}>
+        <button type="button" onClick={() => loadDemo("GREEN")} className="pill pill-green" style={{ cursor: "pointer", fontFamily: "var(--font-body)" }}>
+          🟢 Load Green Demo
+        </button>
+        <button type="button" onClick={() => loadDemo("YELLOW")} className="pill pill-yellow" style={{ cursor: "pointer", fontFamily: "var(--font-body)" }}>
+          🟡 Load Yellow Demo
+        </button>
+        <button type="button" onClick={() => loadDemo("RED")} className="pill" style={{ cursor: "pointer", fontFamily: "var(--font-body)" }}>
+          🔴 Load Red Demo
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
         <div>
-          <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Loan Amount</label>
-          <div className="relative">
-            <span className="absolute left-3 top-2 text-[var(--text-secondary)]">₹</span>
-            <input required type="number" min="100000" max="50000000" step="50000" 
-              className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 pl-8 focus:border-[var(--accent)] outline-none"
+          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "0.4rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Loan Amount</label>
+          <div style={{ position: "relative" }}>
+            <span style={{ position: "absolute", left: "0.75rem", top: "0.75rem", color: "var(--text-muted)" }}>₹</span>
+            <input required type="number" min="100000" max="50000000" step="50000" className="input" style={{ paddingLeft: "1.75rem" }}
               value={formData.loan_amount || ""}
               onChange={(e) => updateForm({ loan_amount: Number(e.target.value) })} />
           </div>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Property Value</label>
-          <div className="relative">
-            <span className="absolute left-3 top-2 text-[var(--text-secondary)]">₹</span>
-            <input required type="number" min={formData.loan_amount || "100000"} 
-              className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 pl-8 focus:border-[var(--accent)] outline-none"
+          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "0.4rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Property Value</label>
+          <div style={{ position: "relative" }}>
+            <span style={{ position: "absolute", left: "0.75rem", top: "0.75rem", color: "var(--text-muted)" }}>₹</span>
+            <input required type="number" min={formData.loan_amount || "100000"} className="input" style={{ paddingLeft: "1.75rem" }}
               value={formData.property_value || ""}
               onChange={(e) => updateForm({ property_value: Number(e.target.value) })} />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Current Rate</label>
-          <div className="relative">
-            <input required type="number" min="5.0" max="20.0" step="0.05"
-              className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 focus:border-[var(--accent)] outline-none"
+          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "0.4rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Current Rate</label>
+          <div style={{ position: "relative" }}>
+            <input required type="number" min="5.0" max="20.0" step="0.05" className="input"
               value={formData.current_interest_rate || ""}
               onChange={(e) => updateForm({ current_interest_rate: Number(e.target.value) })} />
-            <span className="absolute right-3 top-2 text-[var(--text-secondary)]">%</span>
+            <span style={{ position: "absolute", right: "0.75rem", top: "0.75rem", color: "var(--text-muted)" }}>%</span>
           </div>
         </div>
 
         <div>
-           <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Loan Tenure</label>
-           <select required className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 focus:border-[var(--accent)] outline-none"
-              value={formData.loan_tenure_months || ""}
-              onChange={(e) => updateForm({ loan_tenure_months: Number(e.target.value) })}>
-              <option value="" disabled>Select tenure</option>
-              <option value="120">120 months (10 years)</option>
-              <option value="180">180 months (15 years)</option>
-              <option value="240">240 months (20 years)</option>
-              <option value="300">300 months (25 years)</option>
-           </select>
+          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "0.4rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Loan Tenure</label>
+          <select required className="input"
+            value={formData.loan_tenure_months || ""}
+            onChange={(e) => updateForm({ loan_tenure_months: Number(e.target.value) })}>
+            <option value="" disabled>Select tenure</option>
+            <option value="120">120 months (10 years)</option>
+            <option value="180">180 months (15 years)</option>
+            <option value="240">240 months (20 years)</option>
+            <option value="300">300 months (25 years)</option>
+          </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Disbursement Date</label>
-          <input required type="date" max={maxDateStr}
-            className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 focus:border-[var(--accent)] outline-none"
+          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "0.4rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Disbursement Date</label>
+          <input required type="date" max={maxDateStr} className="input"
             value={formData.loan_disbursement_date || ""}
             onChange={(e) => updateForm({ loan_disbursement_date: e.target.value })} />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Lender Name (Optional)</label>
-          <input type="text" placeholder="e.g. HDFC Bank"
-            className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 focus:border-[var(--accent)] outline-none"
+          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "0.4rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Lender Name <span style={{ opacity: 0.5 }}>(Optional)</span></label>
+          <input type="text" placeholder="e.g. HDFC Bank" className="input"
             value={formData.lender_name || ""}
             onChange={(e) => updateForm({ lender_name: e.target.value })} />
         </div>
       </div>
 
-      <button type="submit" className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white py-3 rounded-lg font-semibold mt-4 transition-colors">
-        Next: Financial Profile
+      <button type="submit" className="btn-primary" style={{ width: "100%", marginTop: "2rem", padding: "0.9rem" }}>
+        Next: Financial Profile →
       </button>
     </form>
   );

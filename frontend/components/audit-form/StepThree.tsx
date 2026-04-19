@@ -20,7 +20,6 @@ export default function StepThree() {
     setLoading(true);
     setError(null);
     try {
-      // Validate complete profile
       const data = formData as BorrowerProfile;
       const res = await submitAudit(data);
       router.push(`/results/${res.audit_id}`);
@@ -30,47 +29,66 @@ export default function StepThree() {
     }
   };
 
+  const rows = [
+    { label: "Loan Amount", value: formatINR(formData.loan_amount || 0) },
+    { label: "Property Value", value: formatINR(formData.property_value || 0) },
+    { label: "Implied LTV", value: `${estimatedLtv}%`, accent: true },
+    { label: "Current Rate", value: formatRate(formData.current_interest_rate || 0) },
+    { label: "Annual Income", value: formatINR(formData.annual_income || 0) },
+    { label: "CIBIL Score", value: String(formData.cibil_score || "—"), mono: true },
+    { label: "Employment", value: formData.employment_type?.replace(/_/g, " ") || "—" },
+    { label: "City Tier", value: formData.city_tier?.replace(/_/g, " ") || "—" },
+    { label: "Tenure", value: formData.loan_tenure_months ? `${formData.loan_tenure_months} months` : "—" },
+  ];
+
   return (
-    <div className="space-y-6">
-      <div className="bg-[var(--surface-2)] p-6 rounded-xl border border-[var(--border)]">
-        <h3 className="font-semibold mb-4 text-white">Summary of Details</h3>
-        
-        <dl className="grid grid-cols-2 gap-y-4 text-sm">
-          <dt className="text-[var(--text-secondary)]">Loan Amount</dt>
-          <dd className="text-right font-medium">{formatINR(formData.loan_amount || 0)}</dd>
-          
-          <dt className="text-[var(--text-secondary)]">Property Value</dt>
-          <dd className="text-right font-medium">{formatINR(formData.property_value || 0)}</dd>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      {/* Summary Card */}
+      <div className="card-red" style={{ padding: "1.75rem" }}>
+        <h3 style={{ marginBottom: "1.25rem", fontSize: "1.2rem" }}>Summary of Details</h3>
 
-          <dt className="text-[var(--text-secondary)]">Implied LTV</dt>
-          <dd className="text-right font-medium text-[var(--accent)]">{estimatedLtv}%</dd>
-
-          <dt className="text-[var(--text-secondary)]">Current Rate</dt>
-          <dd className="text-right font-medium">{formatRate(formData.current_interest_rate || 0)}</dd>
-
-          <dt className="text-[var(--text-secondary)]">Annual Income</dt>
-          <dd className="text-right font-medium">{formatINR(formData.annual_income || 0)}</dd>
-
-          <dt className="text-[var(--text-secondary)]">CIBIL Score</dt>
-          <dd className="text-right font-medium font-mono">{formData.cibil_score}</dd>
-
-          <dt className="text-[var(--text-secondary)]">City</dt>
-          <dd className="text-right font-medium">{formData.city_tier?.replace(/_/g, ' ')}</dd>
-        </dl>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", rowGap: "0.85rem" }}>
+          {rows.map((row, i) => (
+            <div key={i} style={{ display: "contents" }}>
+              <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{row.label}</span>
+              <span style={{
+                fontSize: "0.85rem",
+                fontWeight: 500,
+                textAlign: "right",
+                color: row.accent ? "var(--accent)" : "var(--text-primary)",
+                fontFamily: row.mono ? "monospace" : "inherit",
+              }}>
+                {row.value}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <p className="text-xs text-center text-[var(--text-secondary)]">
-        Your Debt-to-Income (DTI) ratio and remaining tenure will be computed server-side securely.
+      <p style={{ fontSize: "0.75rem", textAlign: "center", color: "var(--text-muted)" }}>
+        Your DTI ratio and remaining tenure will be computed server-side securely.
       </p>
 
-      {error && <div className="p-3 bg-[var(--red-bg)] text-[var(--red)] border border-[var(--red)] rounded text-sm text-center">{error}</div>}
+      {error && (
+        <div style={{
+          padding: "0.75rem 1rem",
+          background: "var(--red-bg)",
+          color: "var(--red)",
+          border: "1px solid var(--red-border)",
+          borderRadius: "var(--radius-sm)",
+          fontSize: "0.85rem",
+          textAlign: "center",
+        }}>
+          {error}
+        </div>
+      )}
 
-      <div className="flex gap-4">
-        <button disabled={loading} type="button" onClick={() => setStep(2)} className="w-1/3 border border-[var(--border)] hover:bg-[var(--surface-2)] text-white py-3 rounded-lg font-semibold transition-colors disabled:opacity-50">
-            Back
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <button disabled={loading} type="button" onClick={() => setStep(2)} className="btn-outline" style={{ flex: 1 }}>
+          ← Back
         </button>
-        <button disabled={loading} onClick={handleAudit} className="w-2/3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 flex justify-center items-center gap-2">
-            {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : "Run Audit"}
+        <button disabled={loading} onClick={handleAudit} className="btn-primary" style={{ flex: 2, display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}>
+          {loading ? <span className="spinner" /> : "Run Audit →"}
         </button>
       </div>
     </div>

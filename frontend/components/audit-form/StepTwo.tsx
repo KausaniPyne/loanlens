@@ -9,91 +9,113 @@ export default function StepTwo() {
     setStep(3);
   };
 
+  const labelStyle: React.CSSProperties = {
+    display: "block", fontSize: "0.8rem", fontWeight: 500, marginBottom: "0.4rem",
+    color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em",
+  };
+
   return (
-    <form onSubmit={handleNext} className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={handleNext} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
         <div>
-          <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Annual Income</label>
-          <div className="relative">
-            <span className="absolute left-3 top-2 text-[var(--text-secondary)]">₹</span>
-            <input required type="number" min="100000" 
-              className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 pl-8 focus:border-[var(--accent)] outline-none"
+          <label style={labelStyle}>Annual Income</label>
+          <div style={{ position: "relative" }}>
+            <span style={{ position: "absolute", left: "0.75rem", top: "0.75rem", color: "var(--text-muted)" }}>₹</span>
+            <input required type="number" min="100000" className="input" style={{ paddingLeft: "1.75rem" }}
               value={formData.annual_income || ""}
               onChange={(e) => updateForm({ annual_income: Number(e.target.value) })} />
           </div>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium mb-1 text-[var(--text-secondary)]">Existing Monthly Obligations</label>
-          <div className="relative">
-            <span className="absolute left-3 top-2 text-[var(--text-secondary)]">₹</span>
-            <input required type="number" min="0" title="Include all current EMIs, credit card minimums, and loan repayments."
-              className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded p-2 pl-8 focus:border-[var(--accent)] outline-none"
+          <label style={labelStyle}>Monthly Obligations</label>
+          <div style={{ position: "relative" }}>
+            <span style={{ position: "absolute", left: "0.75rem", top: "0.75rem", color: "var(--text-muted)" }}>₹</span>
+            <input required type="number" min="0" className="input" style={{ paddingLeft: "1.75rem" }}
+              title="Include all current EMIs, credit card minimums, and loan repayments."
               value={formData.existing_obligations_monthly ?? ""}
               onChange={(e) => updateForm({ existing_obligations_monthly: Number(e.target.value) })} />
           </div>
-          <p className="text-xs text-[var(--text-secondary)] mt-1">Total of all your EMIs/dues</p>
+          <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.35rem" }}>Total of all your EMIs/dues</p>
         </div>
       </div>
 
+      {/* CIBIL Score Slider */}
       <div>
-        <div className="flex justify-between items-end mb-2">
-          <label className="block text-sm font-medium text-[var(--text-secondary)]">CIBIL Score</label>
-          <span className="text-2xl font-bold font-mono text-[var(--accent)]">{formData.cibil_score || 300}</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "0.5rem" }}>
+          <label style={labelStyle}>CIBIL Score</label>
+          <span style={{ fontSize: "1.5rem", fontWeight: 700, fontFamily: "monospace", color: "var(--accent)" }}>
+            {formData.cibil_score || 300}
+          </span>
         </div>
         <input required type="range" min="300" max="900" step="1"
-            className="w-full accent-[var(--accent)]"
-            value={formData.cibil_score || 300}
-            onChange={(e) => updateForm({ cibil_score: Number(e.target.value) })} />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>300</span><span>900</span>
+          style={{ width: "100%", accentColor: "var(--accent)" }}
+          value={formData.cibil_score || 300}
+          onChange={(e) => updateForm({ cibil_score: Number(e.target.value) })} />
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.7rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>
+          <span>300</span><span>900</span>
         </div>
       </div>
 
+      {/* Employment Type */}
       <div>
-        <label className="block text-sm font-medium mb-2 text-[var(--text-secondary)]">Employment Type</label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <label style={{ ...labelStyle, marginBottom: "0.75rem" }}>Employment Type</label>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
           {["SALARIED_PRIVATE", "SALARIED_PSU", "SELF_EMPLOYED_BUSINESS", "SELF_EMPLOYED_PROFESSIONAL", "GOVERNMENT"].map(type => (
-            <label key={type} className={`border p-3 rounded cursor-pointer transition-colors ${formData.employment_type === type ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-white' : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-gray-600'}`}>
-                <input required type="radio" className="hidden" name="employment" value={type} 
-                  checked={formData.employment_type === type} 
-                  onChange={(e) => updateForm({ employment_type: e.target.value as any })} />
-                <span className="text-sm font-medium">{type.replace(/_/g, ' ')}</span>
+            <label key={type} style={{
+              border: `1px solid ${formData.employment_type === type ? "var(--accent)" : "var(--border)"}`,
+              background: formData.employment_type === type ? "var(--accent-soft)" : "transparent",
+              padding: "0.75rem 1rem",
+              borderRadius: "var(--radius-sm)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              color: formData.employment_type === type ? "var(--text-primary)" : "var(--text-secondary)",
+            }}>
+              <input required type="radio" style={{ display: "none" }} name="employment" value={type}
+                checked={formData.employment_type === type}
+                onChange={(e) => updateForm({ employment_type: e.target.value as any })} />
+              <span style={{ fontSize: "0.85rem", fontWeight: 500 }}>{type.replace(/_/g, " ")}</span>
             </label>
           ))}
         </div>
       </div>
 
+      {/* City Tier */}
       <div>
-        <label className="block text-sm font-medium mb-2 text-[var(--text-secondary)]">City Tier</label>
-        <div className="grid grid-cols-3 gap-2">
-           <label className={`border border-[var(--border)] p-3 rounded text-center cursor-pointer transition-colors ${formData.city_tier === "TIER_1" ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-white' : 'text-[var(--text-secondary)] hover:border-gray-600'}`}>
-              <input required type="radio" className="hidden" name="city" value="TIER_1"
-                 checked={formData.city_tier === "TIER_1"} onChange={(e) => updateForm({ city_tier: "TIER_1" })} />
-              <div className="text-sm font-medium">Tier 1</div>
-              <div className="text-[10px] mt-1 opacity-60">Mumbai, Delhi, Blr</div>
-           </label>
-           <label className={`border border-[var(--border)] p-3 rounded text-center cursor-pointer transition-colors ${formData.city_tier === "TIER_2" ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-white' : 'text-[var(--text-secondary)] hover:border-gray-600'}`}>
-              <input required type="radio" className="hidden" name="city" value="TIER_2"
-                 checked={formData.city_tier === "TIER_2"} onChange={(e) => updateForm({ city_tier: "TIER_2" })} />
-              <div className="text-sm font-medium">Tier 2</div>
-              <div className="text-[10px] mt-1 opacity-60">Pune, Hyd, Chen</div>
-           </label>
-           <label className={`border border-[var(--border)] p-3 rounded text-center cursor-pointer transition-colors ${formData.city_tier === "TIER_3" ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-white' : 'text-[var(--text-secondary)] hover:border-gray-600'}`}>
-              <input required type="radio" className="hidden" name="city" value="TIER_3"
-                 checked={formData.city_tier === "TIER_3"} onChange={(e) => updateForm({ city_tier: "TIER_3" })} />
-              <div className="text-sm font-medium">Tier 3</div>
-              <div className="text-[10px] mt-1 opacity-60">Others</div>
-           </label>
+        <label style={{ ...labelStyle, marginBottom: "0.75rem" }}>City Tier</label>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+          {[
+            { value: "TIER_1", label: "Tier 1", sub: "Mumbai, Delhi, Blr" },
+            { value: "TIER_2", label: "Tier 2", sub: "Pune, Hyd, Chen" },
+            { value: "TIER_3", label: "Tier 3", sub: "Others" },
+          ].map(({ value, label, sub }) => (
+            <label key={value} style={{
+              border: `1px solid ${formData.city_tier === value ? "var(--accent)" : "var(--border)"}`,
+              background: formData.city_tier === value ? "var(--accent-soft)" : "transparent",
+              padding: "0.75rem",
+              borderRadius: "var(--radius-sm)",
+              textAlign: "center",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              color: formData.city_tier === value ? "var(--text-primary)" : "var(--text-secondary)",
+            }}>
+              <input required type="radio" style={{ display: "none" }} name="city" value={value}
+                checked={formData.city_tier === value}
+                onChange={() => updateForm({ city_tier: value as any })} />
+              <div style={{ fontSize: "0.85rem", fontWeight: 500 }}>{label}</div>
+              <div style={{ fontSize: "0.65rem", marginTop: "0.25rem", opacity: 0.6 }}>{sub}</div>
+            </label>
+          ))}
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <button type="button" onClick={() => setStep(1)} className="w-1/3 border border-[var(--border)] hover:bg-[var(--surface-2)] text-white py-3 rounded-lg font-semibold transition-colors">
-            Back
+      {/* Navigation */}
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <button type="button" onClick={() => setStep(1)} className="btn-outline" style={{ flex: 1 }}>
+          ← Back
         </button>
-        <button type="submit" className="w-2/3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white py-3 rounded-lg font-semibold transition-colors">
-            Review Details
+        <button type="submit" className="btn-primary" style={{ flex: 2 }}>
+          Review Details →
         </button>
       </div>
     </form>
