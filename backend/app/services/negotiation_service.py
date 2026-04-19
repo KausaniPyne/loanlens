@@ -9,7 +9,7 @@ BALANCE_TRANSFER_LENDERS = [
 
 def build_playbook(profile: BorrowerProfile, inference_result: dict) -> dict:
     current_rate = float(profile.current_interest_rate)
-    median_rate = inference_result["fair_rate_corridor"]["p50"]
+    median_rate = float(inference_result["fair_rate_corridor"]["p50"])
     loan_amount = float(profile.loan_amount)
     remaining = inference_result["remaining_tenure_months"]
 

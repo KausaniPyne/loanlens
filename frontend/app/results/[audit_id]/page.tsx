@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { AuditResult } from "@/lib/types";
 
 async function fetchAudit(auditId: string): Promise<AuditResult | null> {
-  const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+  const BASE = process.env.INTERNAL_API_BASE || process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
   try {
     const res = await fetch(`${BASE}/api/v1/audit/${auditId}`, {
       cache: "no-store",

@@ -73,4 +73,60 @@ async def fetch_audit(audit_id: str, db):
     if not row:
         raise HTTPException(status_code=404, detail="Audit not found")
         
-    return dict(row._mapping)
+    row_dict = dict(row._mapping)
+    
+    # Reconstruct nested objects to match the API response schema
+    import json
+    key_drivers = []
+    if row_dict.get("key_drivers"):
+        if isinstance(row_dict["key_drivers"], str):
+            key_drivers = json.loads(row_dict["key_drivers"])
+        else:
+            key_drivers = row_dict["key_drivers"]
+            
+    transformed = {
+        "audit_id": row_dict["audit_id"],
+        "verdict": row_dict["verdict"],
+        "current_rate": row_dict["current_interest_rate"],
+        "fair_rate_corridor": {
+            "p10": row_dict["fair_rate_p10"],
+            "p25": row_dict["fair_rate_p25"],
+            "p50": row_dict["fair_rate_p50"],
+            "p75": row_dict["fair_rate_p75"],
+            "p90": row_dict["fair_rate_p90"],
+            "cohort_size": row_dict["cohort_size"]
+        },
+        "tabnet_predicted_rate": row_dict["tabnet_predicted_rate"],
+        "rate_gap": row_dict["rate_gap"],
+        "overpayment_total_inr": row_dict["overpayment_total_inr"],
+        "cohort_size": row_dict["cohort_size"],
+        "key_drivers": key_drivers,
+        "pipeline_latency_ms": row_dict["pipeline_latency_ms"] or 0,
+        "remaining_tenure_months": row_dict["remaining_tenure_months"],
+        "derived_metrics": {
+            "ltv_ratio": row_dict["ltv_ratio"],
+            "dti_ratio": row_dict["dti_ratio"]
+        }
+    }
+    
+    # Reconstruct action playbook if it's RED (or fetch dynamically, but here we can just rebuild it or we omitted saving playbook to db?)
+    # Wait, the playbook is generated dynamically if missing in the frontend or we can just regenerate it here
+    if transformed["verdict"] == "RED":
+        from app.schemas.borrower import BorrowerProfile
+        from app.services.negotiation_service import build_playbook
+        # We need a dummy profile with the basics we saved
+        dummy_profile = BorrowerProfile(
+            annual_income=row_dict["annual_income"],
+            cibil_score=row_dict["cibil_score"],
+            loan_amount=row_dict["loan_amount"],
+            property_value=row_dict["property_value"],
+            loan_tenure_months=row_dict["loan_tenure_months"],
+            employment_type=row_dict["employment_type"],
+            city_tier=row_dict["city_tier"],
+            current_interest_rate=row_dict["current_interest_rate"],
+            loan_disbursement_date="2020-01-01",  # dummy for signature
+            existing_obligations_monthly=1000
+        )
+        transformed["action_playbook"] = build_playbook(dummy_profile, transformed)
+
+    return transformed
