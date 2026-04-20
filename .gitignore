@@ -47,3 +47,4 @@ venv/
 postgres_data/
 minio_data/
 pitch.md
+details.txt
