@@ -1,7 +1,8 @@
 # LoanLens: Enterprise Loan Intelligence Framework
 
 <p align="center">
-  <em>A high-performance benchmarking platform engineered to bring radical, data-driven transparency to the home loan market.</em>
+  <em>A high-performance benchmarking platform engineered to bring radical, data-driven transparency to the home loan market.</em><br/>
+  <strong><a href="https://github.com/KausaniPyne/loanlens">🔗 View Repository on GitHub</a></strong>
 </p>
 
 <p align="center">
